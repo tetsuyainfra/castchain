@@ -1,0 +1,16 @@
+{
+  "name": "castchain",
+  "version": "0.0.1",
+  "description": "castchain is broadcasting tool for broadcaster",
+  "main": "main/index.js",
+  "dependencies": {
+    "@material-ui/icons": "^4.5.1",
+    "material-design-icons": "^3.0.1",
+    "electron-log": "^4.0.4",
+    "electron-store": "^5.1.0",
+    "request-promise-native": "^1.0.8",
+    "typeface-roboto": "^0.0.75",
+    "ulid": "^2.3.0",
+    "uuid": "^3.4.0"
+  }
+}

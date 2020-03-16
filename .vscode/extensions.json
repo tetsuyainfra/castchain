@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    // "ms-vscode.vscode-typescript-tslint-plugin",
+    "EditorConfig.EditorConfig",
+    "dbaeumer.vscode-eslint",
+    // ignore prettier, and use it in eslint is better ?
+    "esbenp.prettier-vscode",
+    "msjsdiag.debugger-for-chrome",
+    "jebbs.plantuml",
+    "shd101wyy.markdown-preview-enhanced",
+  ]
+}
