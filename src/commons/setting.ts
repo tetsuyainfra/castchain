@@ -27,17 +27,17 @@ const defaultSetting: SettingType = {
       plugin_uuid: null,
       config: {
         name: 'Mock1',
-        url: ''
-      }
+        url: 'https://google.co.jp/',
+      },
     },
     {
       plugin_name: 'MockSourcePlugin',
       plugin_uuid: null,
       config: {
         name: 'Mock2',
-        url: ''
-      }
-    }
+        url: '',
+      },
+    },
     // {
     //   name: 'tetsuyainfra',
     //   // url: 'http://jbbs.shitaraba.net/bbs/read.cgi/game/58589/1414143826/',
@@ -46,7 +46,7 @@ const defaultSetting: SettingType = {
     //   ulid: null
     // }
   ],
-  outputs: []
+  outputs: [],
 }
 let cwd = undefined
 
@@ -63,11 +63,11 @@ export const Setting = new ElectronStore<SettingType>({
 
   fileExtension: 'yaml',
   serialize: yaml.safeDump,
-  deserialize: yaml.safeLoad
+  deserialize: yaml.safeLoad,
 })
 
-Setting.onDidAnyChange(newVal => {
-  log.info('Setting.onDidAnyChange:', newVal)
+Setting.onDidAnyChange((newVal) => {
+  log.debug('Setting.onDidAnyChange: ', JSON.stringify(Setting.store, null, 2))
 })
 
 export function initializeSetting() {

@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme) => {
   // if customize style with theme variable, you can use it
   // console.log(theme)
   return {
@@ -17,12 +17,12 @@ const useStyles = makeStyles(theme => {
       top: 30,
       // left: 0,
       right: 0,
-      margin: '0 auto'
-    }
+      margin: '0 auto',
+    },
   }
 })
 
-export const AddButton: React.FC<{}> = props => {
+export const AddButton: React.FC<{}> = (props) => {
   const theme = useTheme()
   const classes = useStyles(theme)
   return (

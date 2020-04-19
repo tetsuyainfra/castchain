@@ -6,12 +6,12 @@ const useStyles = makeStyles((theme: Theme) =>
     layout: {
       padding: '0',
       widht: '100vw',
-      height: '100vh'
-    }
+      height: '100vh',
+    },
   })
 )
 
-export const Layout: React.FC<{}> = props => {
+export const Layout: React.FC<{}> = (props) => {
   const classes = useStyles()
 
   return <div className={classes.layout}>{props.children}</div>

@@ -38,7 +38,7 @@ export class MockOutputPlugin extends OutputPluginAbstract {
     return {
       plugin_name: this.plugin_name_,
       plugin_uuid: this.ulid_,
-      config: {}
+      config: {},
     }
   }
 

@@ -10,7 +10,7 @@ import { theme } from './theme'
 import {
   GlobalProvider,
   GlobalDispatchContext,
-  GlobalStateContext
+  GlobalStateContext,
 } from './stores'
 
 import { AppBody } from './containers/AppBody'

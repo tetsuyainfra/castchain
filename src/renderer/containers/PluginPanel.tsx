@@ -5,18 +5,16 @@ import { createStyles } from '@material-ui/core/styles'
 const has = require('lodash/has')
 
 import { GlobalDispatchContext, GlobalStateContext } from '../stores'
-
-import AppBar from '@material-ui/core/AppBar'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
 import Typography from '@material-ui/core/Typography'
 
-import { TabPanel } from '../components/TabPanel'
 import { CastChainAPI } from '../api'
 import { Actions, SourceAction } from '../actions'
 
+import { TabBar } from './TabBar'
+import { TabPanel } from './TabPanel'
+
 import { MockSourcePanel } from '../components/MockSource/MockSourcePanel'
-import { WithTabContainer } from './WithTabContainer'
+import { SourcePluginInfo } from '../../commons/source'
 
 // TODO: i will be able to fixe it ?
 // https://github.com/mui-org/material-ui/pull/19491
@@ -26,43 +24,42 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '100%',
       // backgroundColor: 'grey',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
     },
-    tabs: {},
-    tabs_offset: {},
     panels: {
       flexGrow: 1,
-      overflow: 'auto'
-    }
+      overflow: 'auto',
+    },
   })
 )
 
-type SourcePanelProps = {
+const PanelMaps = {
+  MockSourcePlugin: MockSourcePanel,
+}
+
+type PluginPanelProps = {
   // className?: string
 }
 
-const PanelMaps = {
-  MockSourcePlugin: MockSourcePanel
-}
-
-export const SourcePanel: React.FC<SourcePanelProps> = props => {
+export const PluginPanel: React.FC<PluginPanelProps> = (props) => {
   const classes = useStyles()
   const state = React.useContext(GlobalStateContext)
   const dispatch = React.useContext(GlobalDispatchContext)
 
+  // TODO: なんで副作用ありにしてるんだっけ？
   React.useEffect(() => {
     let unmounted = false
     const f = async () => {
-      await CastChainAPI.listSourceInstances().then(settings => {
+      await CastChainAPI.listSourceInstances().then((plugin_infos) => {
         // console.log('CastChainAPI.listSourceInstances()', settings)
         if (!unmounted) {
           // console.log('mounted')
-          settings.forEach((setting: any) => {
+          plugin_infos.forEach((pinfo: SourcePluginInfo) => {
             const action = SourceAction.created(
-              setting.plugin_uuid,
-              setting.plugin_name,
-              setting.tab_name,
-              setting.config
+              pinfo.plugin_uuid,
+              pinfo.plugin_name,
+              pinfo.config,
+              pinfo.status
             )
             // console.log('action', action)
             dispatch(action)
@@ -82,32 +79,25 @@ export const SourcePanel: React.FC<SourcePanelProps> = props => {
 
   return (
     <div className={classes.source_panel}>
-      <React.Fragment>
-        <AppBar position="static">
-          {/* <AppBar position="sticky"> */}
-          {/* <AppBar position="fixed"> */}
-          <Tabs
-            value={tabNumber}
-            onChange={(e, val) => {
-              setTabNumber(val)
-            }}
-          >
-            {state.sources.map((src, idx) => (
-              <Tab label={src.tab_name} key={idx} />
-            ))}
-          </Tabs>
-        </AppBar>
-        <div className={classes.tabs_offset} />
-      </React.Fragment>
+      <TabBar
+        tabs={state.sources.map((src) => src.status.tab_name)}
+        tabNumber={tabNumber}
+        onChange={setTabNumber}
+      />
       <React.Fragment>
         {state.sources
           .map((src, idx) => {
             if (has(PanelMaps, src.plugin_name)) {
+              // TODO: プロパティなのでステータスの変更されてないとタブ変更後にSTATUSが更新されていない
+              //       もしくはタブ開くたびに即時にデータ更新させるか
+              // TODO: switch文で定義したいところ
+              // console.log('src', src)
               return (
                 <MockSourcePanel
                   plugin_name={src.plugin_name}
                   plugin_uuid={src.plugin_uuid}
                   config={src.config}
+                  status={src.status}
                 />
               )
             } else {

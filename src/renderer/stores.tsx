@@ -10,7 +10,7 @@ export const GlobalDispatchContext = React.createContext<
 
 export type InitFunctionType = (state: StateType) => StateType
 
-export const defaultInitialize: InitFunctionType = state => {
+export const defaultInitialize: InitFunctionType = (state) => {
   log.debug('defaultInitalize()', state)
   return state
 }
@@ -20,7 +20,7 @@ type GlobalProviderProps = {
   initFunc?: InitFunctionType
 }
 
-export const GlobalProvider: React.FC<GlobalProviderProps> = props => {
+export const GlobalProvider: React.FC<GlobalProviderProps> = (props) => {
   const { initState, initFunc } = props
   const [state, dispatch] = React.useReducer(
     reducer,

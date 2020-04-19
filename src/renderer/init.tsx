@@ -24,9 +24,9 @@ const WaitInit = () => {
 
     let umounted = false
     const f = async () => {
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         resolve(CastChainAPI.initCheck())
-      }).then(resolve => {
+      }).then((resolve) => {
         if (!umounted) {
           setInitStatus('load')
         }

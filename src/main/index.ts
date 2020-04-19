@@ -7,7 +7,6 @@ const commandLineUsage = require('command-line-usage')
 
 import { initializeSetting } from '../commons/setting'
 
-import { SourceContainer } from './SourceContainer'
 import { PluginContainer } from './PluginContainer'
 import { WebServer } from './WebServer'
 
@@ -16,12 +15,12 @@ declare const IS_DEVELOPMENT: boolean | undefined
 
 if (typeof IS_DEVELOPMENT !== 'undefined' && IS_DEVELOPMENT == true) {
   log.verbose
+  Electron.app.allowRendererProcessReuse = true
 }
 
 class Application {
   private mainWindow: Electron.BrowserWindow | null = null
   private app: Electron.App
-  private source_container_: SourceContainer | null = null
   private plugin_container_: PluginContainer | null = null
   private open_url: string
 
@@ -39,10 +38,6 @@ class Application {
   }
 
   private onWindowAllClosed() {
-    if (this.source_container_) {
-      this.source_container_.cleanup()
-      this.source_container_ = null
-    }
     if (this.plugin_container_) {
       this.plugin_container_.cleanup()
       this.plugin_container_ = null
@@ -58,13 +53,13 @@ class Application {
         minWidth: 500,
         minHeight: 200,
         acceptFirstMouse: true,
-        titleBarStyle: 'hidden'
+        titleBarStyle: 'hidden',
       },
       {
         webPreferences: {
-          nodeIntegration: true
+          nodeIntegration: true,
           // nodeIntegration: IS_WATCH ? true : false
-        }
+        },
       }
     )
 
@@ -81,9 +76,6 @@ class Application {
     })
   }
   private createSourcePlugin() {
-    if (this.source_container_ === null) {
-      this.source_container_ = new SourceContainer()
-    }
     if (this.plugin_container_ === null) {
       this.plugin_container_ = new PluginContainer()
     }
@@ -131,29 +123,29 @@ const optionDefinitions = [
   {
     name: 'init-config',
     type: Boolean,
-    description: 'Initialize config file'
+    description: 'Initialize config file',
   },
   {
     name: 'help',
     type: Boolean,
-    description: 'Print this usage guide.'
+    description: 'Print this usage guide.',
   },
   {
     name: 'version',
     type: Boolean,
-    description: 'Print application version.'
-  }
+    description: 'Print application version.',
+  },
 ]
 
 const sections = [
   {
     header: 'Castchain',
-    content: "It is for broadcaster's tools."
+    content: "It is for broadcaster's tools.",
   },
   {
     header: 'Options',
-    optionList: optionDefinitions
-  }
+    optionList: optionDefinitions,
+  },
 ]
 
 const options = commandLineArgs(optionDefinitions)

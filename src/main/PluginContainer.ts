@@ -3,7 +3,7 @@ import log from 'electron-log'
 
 import {
   CASTCHAIN_API_CHANNEL_NAME,
-  CASTCHAIN_API_ENTRIES
+  CASTCHAIN_API_ENTRIES,
 } from '../commons/castchain'
 
 //--------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ import {
 //--------------------------------------------------------------------------------
 import {
   SourcePluginInterface,
-  SourcePluginInterfaceStatic
+  SourcePluginInterfaceStatic,
 } from './sources/SourceInterface'
 
 import { MockSourcePlugin } from './sources/MockSource'
@@ -21,7 +21,7 @@ import { MockSourcePlugin } from './sources/MockSource'
 //--------------------------------------------------------------------------------
 import {
   OutputPluginInterface,
-  OutputPluginInterfaceStatic
+  OutputPluginInterfaceStatic,
 } from './outputs/OutputInterface'
 
 import { MockOutputPlugin } from './outputs/MockOutput'
@@ -44,10 +44,10 @@ type PluginInfo = {
 export class PluginContainer {
   private static CHANNEL_NAME = CASTCHAIN_API_CHANNEL_NAME
   private static SOURCE_PLUGINS: ReadonlyArray<SourcePluginInterfaceStatic> = [
-    MockSourcePlugin
+    MockSourcePlugin,
   ]
   private static OUTPUT_PLUGINS: ReadonlyArray<OutputPluginInterfaceStatic> = [
-    MockOutputPlugin
+    MockOutputPlugin,
     // NichanPlugin
   ]
 
@@ -75,13 +75,14 @@ export class PluginContainer {
   }
   cleanup() {
     log.debug('PluginContainer.cleanup()')
-    MainSetting.save(this.setting_)
+    // MainSetting.save(this.setting_)
+    this._storePlugins()
     Electron.ipcMain.removeHandler(CASTCHAIN_API_CHANNEL_NAME)
   }
 
   private _restorePlugins() {
     this.sources_ = this.setting_.sources
-      .map(setting => {
+      .map((setting) => {
         log.debug('restorePlugin->', setting)
         return this.createSourceFromSetting(setting)
       })
@@ -91,7 +92,7 @@ export class PluginContainer {
     log.debug('restored sources_[]:', this.sources_)
 
     this.outputs_ = this.setting_.outputs
-      .map(setting => {
+      .map((setting) => {
         log.debug('restorePlugin->', setting)
         return this.createOutputFromSetting(setting)
       })
@@ -101,11 +102,17 @@ export class PluginContainer {
     log.debug('restored outputs_[]:', this.outputs_)
   }
   private _storePlugins() {
-    this.sources_.map(p => {
-      log.debug(p.getConfig())
+    const setting_sources = this.sources_.map((p) => {
+      // log.debug(p.getConfig())
+      return p.getConfig()
     })
-    this.outputs_.map(p => {
-      log.debug(p.getConfig())
+    const setting_outputs = this.outputs_.map((p) => {
+      // log.debug(p.getConfig())
+      return p.getConfig()
+    })
+    MainSetting.save({
+      sources: setting_sources,
+      outputs: setting_outputs,
     })
   }
 
@@ -150,9 +157,9 @@ export class PluginContainer {
   //  Source Plugin Methods
   //--------------------------------------------------------------------------------
   listSourcePlugins(): PluginInfo[] {
-    return PluginContainer.SOURCE_PLUGINS.map(p => ({
+    return PluginContainer.SOURCE_PLUGINS.map((p) => ({
       plugin_type: 'source',
-      plugin_name: p.plugin_name
+      plugin_name: p.plugin_name,
     }))
   }
   createSource(payload: any): SourcePluginInterface {
@@ -162,7 +169,7 @@ export class PluginContainer {
     setting: PluginSettingType
   ): SourcePluginInterface | null {
     let Plugin = PluginContainer.SOURCE_PLUGINS.find(
-      p => p.plugin_name === setting.plugin_name
+      (p) => p.plugin_name === setting.plugin_name
     )
     if (!Plugin) {
       log.debug("Can't found correct Plugin", setting)
@@ -174,16 +181,16 @@ export class PluginContainer {
   }
   destroySource(payload: any): void {}
   listSourceInstances() {
-    return this.sources_.map(plugin => plugin.getStatus())
+    return this.sources_.map((plugin) => plugin.getInfo())
   }
 
   //--------------------------------------------------------------------------------
   //  Output Plugin Methods
   //--------------------------------------------------------------------------------
   listOutputPlugins(): PluginInfo[] {
-    return PluginContainer.OUTPUT_PLUGINS.map(p => ({
+    return PluginContainer.OUTPUT_PLUGINS.map((p) => ({
       plugin_type: 'output',
-      plugin_name: p.plugin_name
+      plugin_name: p.plugin_name,
     }))
   }
   createOutput(payload: any): OutputPluginInterface {
@@ -193,7 +200,7 @@ export class PluginContainer {
     setting: PluginSettingType
   ): OutputPluginInterface | null {
     let Plugin = PluginContainer.OUTPUT_PLUGINS.find(
-      p => p.plugin_name === setting.plugin_name
+      (p) => p.plugin_name === setting.plugin_name
     )
     if (!Plugin) {
       return null

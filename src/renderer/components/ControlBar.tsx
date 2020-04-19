@@ -18,12 +18,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.secondary,
     '& svg': {
-      margin: theme.spacing(2)
+      margin: theme.spacing(2),
     },
     '& hr': {
-      margin: theme.spacing(0, 0.5)
-    }
-  }
+      margin: theme.spacing(0, 0.5),
+    },
+  },
 }))
 
 type ControlBarProps = {
@@ -33,25 +33,31 @@ type ControlBarProps = {
   handleSetting?: Function
 }
 
-export const ControlBar: React.FC<ControlBarProps> = props => {
+export const ControlBar: React.FC<ControlBarProps> = (props) => {
   const classes = useStyles()
   const { handlePlay, handlePause, handleStop, handleSetting } = props
   return (
     <ButtonGroup color="primary" aria-label="outlined primary button group">
-      <Button onClick={e => handlePlay && handlePlay(e)} disabled={!handlePlay}>
+      <Button
+        onClick={(e) => handlePlay && handlePlay(e)}
+        disabled={!handlePlay}
+      >
         <PlayArrowIcon />
       </Button>
       <Button
-        onClick={e => handlePause && handlePause(e)}
+        onClick={(e) => handlePause && handlePause(e)}
         disabled={!handlePause}
       >
         <PauseIcon />
       </Button>
-      <Button onClick={e => handleStop && handleStop(e)} disabled={!handleStop}>
+      <Button
+        onClick={(e) => handleStop && handleStop(e)}
+        disabled={!handleStop}
+      >
         <StopIcon />
       </Button>
       <Button
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault()
           handleSetting && handleSetting(e)
         }}

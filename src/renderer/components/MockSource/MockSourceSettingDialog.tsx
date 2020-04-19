@@ -25,13 +25,15 @@ type MockSourceSettingDialogProp = {
   }
 }
 
-export const MockSourceSettingDialog: React.FC<MockSourceSettingDialogProp> = props => {
+export const MockSourceSettingDialog: React.FC<MockSourceSettingDialogProp> = (
+  props
+) => {
   const { onSubmit, onCancel, configValue, open } = props
 
   const refName = React.createRef<HTMLInputElement>()
   const refUrl = React.createRef<HTMLInputElement>()
 
-  const handleClose = () => {
+  const handleClose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     onCancel && onCancel()
   }
@@ -53,10 +55,7 @@ export const MockSourceSettingDialog: React.FC<MockSourceSettingDialogProp> = pr
     >
       <DialogTitle id="simple-dialog-title">MockConfig</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          To subscribe to this website, please enter your email address here. We
-          will send updates occasionally.
-        </DialogContentText>
+        <DialogContentText>Mock用設定テスト</DialogContentText>
         <TextField
           margin="dense"
           id="name"

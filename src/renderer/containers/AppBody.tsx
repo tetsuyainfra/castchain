@@ -14,9 +14,8 @@ import MenuIcon from '@material-ui/icons/Menu'
 import SearchIcon from '@material-ui/icons/Search'
 
 import { Layout } from './Layout'
-import { SourcePanel } from './SourcePanel'
+import { PluginPanel } from './PluginPanel'
 
-import { FactorySourceAPI } from '../api'
 import { Actions, SourceAction } from '../actions'
 
 const mapValues = require('lodash/mapValues')
@@ -30,18 +29,18 @@ const useStyles = makeStyles((theme: Theme) => {
       padding: '2px 4px',
       display: 'flex',
       alignItems: 'center',
-      width: 'auto'
+      width: 'auto',
     },
     input: {
       marginLeft: theme.spacing(1),
-      flex: 1
+      flex: 1,
     },
     iconButton: {
-      padding: 10
+      padding: 10,
     },
     divider: {
       height: 28,
-      margin: 4
+      margin: 4,
     },
     // see mixint
     // https://github.com/mui-org/material-ui/blob/a94ad0cbdf3e24301428c01ec1d1b96083bf12ac/packages/material-ui/src/styles/createMixins.js#L32
@@ -50,13 +49,13 @@ const useStyles = makeStyles((theme: Theme) => {
       // backgroundColor: 'grey',
       height: 'calc(100vh - 48px)',
       [`${theme.breakpoints.up('xs')} and (orientation: landscape)`]: {
-        height: 'calc(100vh - 48px)'
+        height: 'calc(100vh - 48px)',
       },
       [theme.breakpoints.up('sm')]: {
         // height: 'calc(100vh - 64px)'
-        height: 'calc(100vh - 48px)'
-      }
-    }
+        height: 'calc(100vh - 48px)',
+      },
+    },
   })
 })
 
@@ -77,10 +76,10 @@ export const AppBody = () => {
       const url = urlInput.current.value
       urlInput.current.value = ''
 
-      FactorySourceAPI.createPlugin('ShitarabaPlugin', url).then(result => {
-        const { plugin_id, ulid } = result.payload
-        SourceAction.createPlugin(dispatch, ulid, plugin_id)
-      })
+      // FactorySourceAPI.createPlugin('ShitarabaPlugin', url).then(result => {
+      //   const { plugin_id, ulid } = result.payload
+      //   SourceAction.createPlugin(dispatch, ulid, plugin_id)
+      // })
     }
   }
 
@@ -115,7 +114,7 @@ export const AppBody = () => {
       </Paper>
       {/* Layout height=100vh */}
       <div className={classes.panels}>
-        <SourcePanel />
+        <PluginPanel />
       </div>
     </Layout>
   )

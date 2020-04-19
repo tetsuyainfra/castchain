@@ -1,22 +1,12 @@
 import { ipcMain } from 'electron'
-import { SOURCE_API_ENTRIES } from '../../commons/source'
 import { ulid, ULID } from 'ulid'
 import { PluginSettingType } from '../../commons/setting'
+import { SourcePluginInfo } from '../../commons/source'
 
-export type MessageType = {
-  type: SOURCE_API_ENTRIES
-  payload?: any
-}
-
-// It's Observer
-export interface ObserverFunction {
-  (message: MessageType): boolean
-}
-
+//--------------------------------------------------------------------------------
+// Plugin Interface
+//--------------------------------------------------------------------------------
 export interface SourcePluginInterface {
-  // Plugin Instance ID
-  ulid_: string
-
   // destructor user defined
   cleanup(): void
 
@@ -30,14 +20,18 @@ export interface SourcePluginInterface {
   // -- status
   isValid(): boolean
   // getSourceName(): Promise<string>
-  getStatus(): Object
+  getInfo(): SourcePluginInfo
 
   // -- command will wake from Main process
   updateSourceURL(url: string): boolean
+  // startPublish(event: Electron.WebContents, payload: any): boolean
   startPublish(): boolean
   stopPublish(): boolean
 }
 
+//--------------------------------------------------------------------------------
+// Plugin Interface for new and URL validater
+//--------------------------------------------------------------------------------
 export interface SourcePluginInterfaceStatic {
   // Plugin ID(Pluginの型を識別する)
   plugin_name: string
@@ -49,12 +43,20 @@ export interface SourcePluginInterfaceStatic {
   isValidURL(url: string): boolean
 }
 
+//--------------------------------------------------------------------------------
+// Plugin Abstract Class
+// こいつを継承して実装してくれー
+//--------------------------------------------------------------------------------
 export abstract class SourcePluginAbstract implements SourcePluginInterface {
-  ulid_: string
+  private ulid_: string
 
   constructor() {
     this.ulid_ = ulid()
   }
+  get ulid(): string {
+    return this.ulid_
+  }
+
   abstract cleanup(): void
 
   abstract setConfig(config: PluginSettingType): boolean
@@ -62,11 +64,23 @@ export abstract class SourcePluginAbstract implements SourcePluginInterface {
 
   // -- status
   abstract isValid(): boolean
-  abstract getStatus(): Object
-  // abstract getSourceName(): Promise<string>
+  abstract getInfo(): SourcePluginInfo
 
   // -- command will wake from Main process
   abstract updateSourceURL(url: string): boolean
+  // abstract startPublish(event: Electron.WebContents, payload: any): boolean
   abstract startPublish(): boolean
   abstract stopPublish(): boolean
 }
+
+/*
+export type MessageType = {
+  type: SOURCE_API_ENTRIES
+  payload?: any
+}
+
+// It's Observer
+export interface ObserverFunction {
+  (message: MessageType): boolean
+}
+*/

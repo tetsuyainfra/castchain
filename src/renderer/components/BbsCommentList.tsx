@@ -8,21 +8,21 @@ import CardActions from '@material-ui/core/CardActions'
 
 const useStyles = makeStyles({
   card: {
-    minWidth: 275
+    minWidth: 275,
   },
   title: {
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 })
 
-type CommentType = {
+type BbsCommentType = {
   no: number
   name: string
   mail: string
   body: string
 }
 
-export const Comment: React.FC<CommentType> = props => {
+export const BbsComment: React.FC<BbsCommentType> = (props) => {
   const classes = useStyles()
   return (
     <Card className={classes.card} variant="outlined">
@@ -48,13 +48,13 @@ export const Comment: React.FC<CommentType> = props => {
   )
 }
 
-type CommentListType = {
-  comments: Array<CommentType>
+type BbsCommentListType = {
+  comments: Array<BbsCommentType>
 }
 
-export const CommentList: React.FC<CommentListType> = props => {
-  const comments = props.comments.map((comment: CommentType) => (
-    <Comment key={comment.no} {...comment} />
+export const BbsCommentList: React.FC<BbsCommentListType> = (props) => {
+  const comments = props.comments.map((comment: BbsCommentType) => (
+    <BbsComment key={comment.no} {...comment} />
   ))
   return <div>{comments}</div>
 }

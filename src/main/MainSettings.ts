@@ -4,7 +4,7 @@ import { SettingType, Setting, PluginSettingType } from '../commons/setting'
 export type MainSettingType = Pick<SettingType, 'sources' | 'outputs'>
 
 export function save(config: MainSettingType) {
-  log.debug('MainSettings.save()', config)
+  log.debug('MainSettings.save(config)', JSON.stringify(config, null, 2))
   Setting.set('sources', config.sources)
   Setting.set('outputs', config.outputs)
 }
@@ -17,7 +17,7 @@ export function load(): MainSettingType {
 
 export const MainSetting = {
   save,
-  load
+  load,
 }
 
 /*
