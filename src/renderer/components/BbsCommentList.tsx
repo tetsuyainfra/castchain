@@ -6,6 +6,8 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 
+import { BbsComment } from '../../commons/source'
+
 const useStyles = makeStyles({
   card: {
     minWidth: 275,
@@ -15,14 +17,7 @@ const useStyles = makeStyles({
   },
 })
 
-type BbsCommentType = {
-  no: number
-  name: string
-  mail: string
-  body: string
-}
-
-export const BbsComment: React.FC<BbsCommentType> = (props) => {
+export const Comment: React.FC<BbsComment> = (props) => {
   const classes = useStyles()
   return (
     <Card className={classes.card} variant="outlined">
@@ -32,14 +27,8 @@ export const BbsComment: React.FC<BbsCommentType> = (props) => {
           color="textSecondary"
           gutterBottom
         >
-          {props.no} - {props.name}[{props.mail}]
+          レス{props.num} {props.name}[{props.mail}]
         </Typography>
-        {/* <Typography variant="h5" component="h2">
-                belent
-              </Typography>
-              <Typography className={classes.pos} color="textSecondary">
-                adjective
-              </Typography> */}
         <Typography variant="body2" component="p">
           {props.body}
         </Typography>
@@ -49,12 +38,12 @@ export const BbsComment: React.FC<BbsCommentType> = (props) => {
 }
 
 type BbsCommentListType = {
-  comments: Array<BbsCommentType>
+  comments: Array<BbsComment>
 }
 
 export const BbsCommentList: React.FC<BbsCommentListType> = (props) => {
-  const comments = props.comments.map((comment: BbsCommentType) => (
-    <BbsComment key={comment.no} {...comment} />
+  const comments = props.comments.map((comment: BbsComment) => (
+    <Comment key={comment.num} {...comment} />
   ))
   return <div>{comments}</div>
 }

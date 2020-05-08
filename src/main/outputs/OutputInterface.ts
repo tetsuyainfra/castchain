@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
-import { SOURCE_API_ENTRIES } from '../../commons/source'
 import { ulid, ULID } from 'ulid'
+
+import { PluginType } from '../../commons/castchain'
 import { PluginSettingType } from '../../commons/setting'
 
 export interface OutputPluginInterface {
@@ -12,6 +13,8 @@ export interface OutputPluginInterface {
 }
 
 export interface OutputPluginInterfaceStatic {
+  // Plugin Type
+  plugin_type: PluginType
   // Plugin ID(Pluginの型を識別する)
   plugin_name: string
 

@@ -13,8 +13,9 @@ import { Actions, SourceAction } from '../actions'
 import { TabBar } from './TabBar'
 import { TabPanel } from './TabPanel'
 
-import { MockSourcePanel } from '../components/MockSource/MockSourcePanel'
 import { SourcePluginInfo } from '../../commons/source'
+import { MockSourcePanel } from '../components/MockSource/MockSourcePanel'
+import { NichanSourcePanel } from '../components/NichanSource/NichanSourcePanel'
 
 // TODO: i will be able to fixe it ?
 // https://github.com/mui-org/material-ui/pull/19491
@@ -33,8 +34,19 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-const PanelMaps = {
+type SrcType = {
+  plugin_name: string
+  plugin_uuid: string
+  config: any
+  status: any
+}
+
+const PanelMaps: { [key: string]: any } = {
   MockSourcePlugin: MockSourcePanel,
+  NichanSourcePlugin: NichanSourcePanel,
+}
+const getPanel = (src: SrcType): JSX.Element => {
+  return React.createElement(PanelMaps[src.plugin_name], src)
 }
 
 type PluginPanelProps = {
@@ -74,6 +86,7 @@ export const PluginPanel: React.FC<PluginPanelProps> = (props) => {
     }
     return cleanup
   }, [])
+  // TODO: ↑この監視するリスト違う気がする
 
   const [tabNumber, setTabNumber] = React.useState<number>(0)
 
@@ -86,23 +99,8 @@ export const PluginPanel: React.FC<PluginPanelProps> = (props) => {
       />
       <React.Fragment>
         {state.sources
-          .map((src, idx) => {
-            if (has(PanelMaps, src.plugin_name)) {
-              // TODO: プロパティなのでステータスの変更されてないとタブ変更後にSTATUSが更新されていない
-              //       もしくはタブ開くたびに即時にデータ更新させるか
-              // TODO: switch文で定義したいところ
-              // console.log('src', src)
-              return (
-                <MockSourcePanel
-                  plugin_name={src.plugin_name}
-                  plugin_uuid={src.plugin_uuid}
-                  config={src.config}
-                  status={src.status}
-                />
-              )
-            } else {
-              return 'Item One'
-            }
+          .map((src: SrcType, idx) => {
+            return getPanel(src)
           })
           .map((elm, idx) => (
             <TabPanel

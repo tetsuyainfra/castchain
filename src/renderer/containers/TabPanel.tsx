@@ -45,7 +45,7 @@ export const TabPanel: React.FC<TabPanelProps> = (props) => {
       className={props.className}
       {...other}
     >
-      {tabSelect === tabIndex && <Box p={3}>{children}</Box>}
+      {tabSelect === tabIndex && <Box p="1rem">{children}</Box>}
     </Typography>
   )
 }

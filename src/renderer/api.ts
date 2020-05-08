@@ -5,7 +5,7 @@ const findIndex = require('lodash/findIndex')
 
 import {
   CASTCHAIN_API_CHANNEL_NAME,
-  CASTCHAIN_API_ENTRIES,
+  CastChainApiEntries,
 } from '../commons/castchain'
 
 // MEMO
@@ -19,19 +19,19 @@ export class CastChainAPI {
 
   static initCheck() {
     return ipcRenderer.invoke(CASTCHAIN_API_CHANNEL_NAME, {
-      type: CASTCHAIN_API_ENTRIES.INIT_CHECK,
+      type: CastChainApiEntries.INIT_CHECK,
     })
   }
 
   // Source
   static listSourcePlugins() {
     return ipcRenderer.invoke(CASTCHAIN_API_CHANNEL_NAME, {
-      type: CASTCHAIN_API_ENTRIES.LIST_SOURCE_PLUGINS,
+      type: CastChainApiEntries.LIST_SOURCE_PLUGINS,
     })
   }
   static listSourceInstances() {
     return ipcRenderer.invoke(CASTCHAIN_API_CHANNEL_NAME, {
-      type: CASTCHAIN_API_ENTRIES.LIST_SOURCE_INSTANCES,
+      type: CastChainApiEntries.LIST_SOURCE_INSTANCES,
       // payload: 'can you hear me ?'
     })
   }
@@ -46,16 +46,26 @@ export class CastChainAPI {
     }
     return cache[plugin_uuid]
   }
+  static createSource(uri: string, option?: any) {
+    const _option = option || {}
+    return ipcRenderer.invoke(CASTCHAIN_API_CHANNEL_NAME, {
+      type: CastChainApiEntries.CREATE_SOURCE,
+      payload: {
+        uri,
+        option: _option,
+      },
+    })
+  }
 
   // Output
   static listOutputPlugins() {
     return ipcRenderer.invoke(CASTCHAIN_API_CHANNEL_NAME, {
-      type: CASTCHAIN_API_ENTRIES.LIST_OUTPUT_PLUGINS,
+      type: CastChainApiEntries.LIST_OUTPUT_PLUGINS,
     })
   }
   static listOutputInstances() {
     return ipcRenderer.invoke(CASTCHAIN_API_CHANNEL_NAME, {
-      type: CASTCHAIN_API_ENTRIES.LIST_OUTPUT_INSTANCES,
+      type: CastChainApiEntries.LIST_OUTPUT_INSTANCES,
     })
   }
 }

@@ -16,7 +16,8 @@ import SearchIcon from '@material-ui/icons/Search'
 import { Layout } from './Layout'
 import { PluginPanel } from './PluginPanel'
 
-import { Actions, SourceAction } from '../actions'
+import { SourceAction } from '../actions'
+import { CastChainAPI } from '../api'
 
 const mapValues = require('lodash/mapValues')
 // const fromPairs = require('lodash/fromPairs')
@@ -66,20 +67,35 @@ export const AppBody = () => {
   const dispatch = React.useContext(GlobalDispatchContext)
 
   let urlInput = React.createRef<HTMLInputElement>()
+  const [urlValue, setUrlValue] = React.useState<string>(
+    'http://bbs.jpnkn.com/test/read.cgi/tetsuyainfra/1582375424/'
+    // http://bbs.jpnkn.com/tetsuyainfra/
+  )
+
+  // evt: React.HTMLAttributes<HTMLInputElement | HTMLTextAreaElement>
+  const handleOnChangeURL = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    evt.preventDefault()
+    setUrlValue(evt.target.value)
+  }
 
   const handleCreateSource = (
     evt: React.FormEvent<HTMLDivElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
-    evt.preventDefault()
-
     if (urlInput && urlInput.current) {
+      evt.preventDefault()
       const url = urlInput.current.value
-      urlInput.current.value = ''
-
-      // FactorySourceAPI.createPlugin('ShitarabaPlugin', url).then(result => {
-      //   const { plugin_id, ulid } = result.payload
-      //   SourceAction.createPlugin(dispatch, ulid, plugin_id)
-      // })
+      return CastChainAPI.createSource(url).then((pinfo) => {
+        console.log('result', pinfo)
+        const action = SourceAction.created(
+          pinfo.plugin_uuid,
+          pinfo.plugin_name,
+          pinfo.config,
+          pinfo.status
+        )
+        // console.log('action', action)
+        dispatch(action)
+        setUrlValue('')
+      })
     }
   }
 
@@ -100,7 +116,8 @@ export const AppBody = () => {
           placeholder="Input BBS URL"
           inputProps={{ 'aria-label': 'search google maps' }}
           inputRef={urlInput}
-          value="http://jbbs.shitaraba.net/bbs/read.cgi/game/58589/1414143826/"
+          onChange={handleOnChangeURL}
+          value={urlValue}
         />
         <Divider className={classes.divider} orientation="vertical" />
         <IconButton

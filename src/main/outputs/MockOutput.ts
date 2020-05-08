@@ -5,13 +5,16 @@ import { compareAsc, format } from 'date-fns'
 
 import { OutputPluginAbstract } from './OutputInterface'
 import { PluginSettingType } from '../../commons/setting'
+import { PluginKinds, PluginType } from '../../commons/castchain'
 
 export class MockOutputPlugin extends OutputPluginAbstract {
+  static plugin_type: PluginType = PluginKinds.OUTPUT
   static plugin_name: string = 'MockOutputPlugin'
   static isValidURL(url: string) {
     return true
   }
 
+  plugin_type: PluginType = MockOutputPlugin.plugin_type
   plugin_name_: string = MockOutputPlugin.plugin_name
   name_: string = ''
   url_: string = ''

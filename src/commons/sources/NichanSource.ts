@@ -1,22 +1,24 @@
-import { SourceIpcCallEntries, SourceIpcNotifyEntries } from '../source'
 import { PluginType } from '../castchain'
+import { SourceIpcCallEntries, SourceIpcNotifyEntries } from '../source'
+import { BbsComment } from '../source'
 
-export type MockSourceConfig = {
-  name: string
+export type NichanSourceConfig = {
+  bbs_name: string
   url: string
+  read_no: number
 }
 
-export type MockSourceStatus = {
+export type NichanSourceStatus = {
   tab_name: string
   publish_status: 'unknown' | 'pending' | 'polling'
 }
 
-export type MockSourceInfo = {
+export type NichanSourceInfo = {
   plugin_type: PluginType
   plugin_uuid: string
   plugin_name: string
-  config: MockSourceConfig
-  status: MockSourceStatus
+  config: NichanSourceConfig
+  status: NichanSourceStatus
 }
 
 //-------------------------------------------------------------------------
@@ -24,7 +26,7 @@ export type MockSourceInfo = {
 //-------------------------------------------------------------------------
 export type UpdateConfigMessage = {
   type: typeof SourceIpcCallEntries.UPDATE_CONFIG
-  payload: Partial<MockSourceConfig>
+  payload: Partial<NichanSourceConfig>
 }
 export type StartMessage = {
   type: typeof SourceIpcCallEntries.START_PUBLISH
@@ -35,19 +37,24 @@ export type StopMessage = {
   payload?: any
 }
 
-export type MockSourceMessage = StartMessage | StopMessage | UpdateConfigMessage
+export type NichanSourceMessage =
+  | StartMessage
+  | StopMessage
+  | UpdateConfigMessage
 
 //-------------------------------------------------------------------------
 // Rendererへのデータ配布時の固定値,メッセージ型
 //-------------------------------------------------------------------------
 export type StatusNotify = {
   type: typeof SourceIpcNotifyEntries.STATUS
-  payload: MockSourceInfo
+  payload: NichanSourceInfo
 }
 
 export type DataNotify = {
   type: typeof SourceIpcNotifyEntries.DATA
-  payload: any
+  payload: {
+    comments: Array<BbsComment>
+  }
 }
 
-export type MockSourceNotify = StatusNotify | DataNotify
+export type NichanSourceNotify = StatusNotify | DataNotify

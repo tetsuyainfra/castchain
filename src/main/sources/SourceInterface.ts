@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import { ulid, ULID } from 'ulid'
 import { PluginSettingType } from '../../commons/setting'
 import { SourcePluginInfo } from '../../commons/source'
+import { PluginType } from '../../commons/castchain'
 
 //--------------------------------------------------------------------------------
 // Plugin Interface
@@ -33,11 +34,17 @@ export interface SourcePluginInterface {
 // Plugin Interface for new and URL validater
 //--------------------------------------------------------------------------------
 export interface SourcePluginInterfaceStatic {
+  // Plugin Type
+  plugin_type: PluginType
   // Plugin ID(Pluginの型を識別する)
   plugin_name: string
 
   // インスタンスのコンストラクター
-  new (...args: any[]): SourcePluginInterface
+  // new (...args: any[]): SourcePluginInterface
+  // new (uri: string, option: any): SourcePluginInterface
+  new (args: any): SourcePluginInterface
+
+  // fromConfig(config: any): SourcePluginInterface
 
   // インスタンスを作成せずにURLチェックを行う
   isValidURL(url: string): boolean

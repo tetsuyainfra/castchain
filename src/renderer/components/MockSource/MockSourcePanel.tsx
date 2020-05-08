@@ -112,7 +112,10 @@ export const MockSourcePanel: React.FC<MockSourcePanelProp> = (props) => {
 
   return (
     <>
-      <h1>MockSourcePanel</h1>
+      {/* <Typography>MockSourcePanel</Typography> */}
+      <Typography variant="h6" gutterBottom>
+        MockSourcePanel
+      </Typography>
       <ControlBar
         handlePlay={handleStart}
         handlePause={handleStop}

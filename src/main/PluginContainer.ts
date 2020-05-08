@@ -3,7 +3,9 @@ import log from 'electron-log'
 
 import {
   CASTCHAIN_API_CHANNEL_NAME,
-  CASTCHAIN_API_ENTRIES,
+  CastChainApiType,
+  CastChainApiEntries,
+  PluginType,
 } from '../commons/castchain'
 
 //--------------------------------------------------------------------------------
@@ -14,7 +16,7 @@ import {
   SourcePluginInterfaceStatic,
 } from './sources/SourceInterface'
 
-import { MockSourcePlugin } from './sources/MockSource'
+import { MockSourcePlugin } from './sources/MockSourcePlugin'
 
 //--------------------------------------------------------------------------------
 //  Output Plugin
@@ -24,26 +26,38 @@ import {
   OutputPluginInterfaceStatic,
 } from './outputs/OutputInterface'
 
-import { MockOutputPlugin } from './outputs/MockOutput'
 import { MainSetting, MainSettingType } from './MainSettings'
 import { PluginSettingType } from '../commons/setting'
+
+import { MockOutputPlugin } from './outputs/MockOutput'
+import { NichanSourcePlugin } from './sources/NichanSource'
 
 //--------------------------------------------------------------------------------
 // CODE
 //--------------------------------------------------------------------------------
 type CastchainApiMessageType = {
-  type: CASTCHAIN_API_ENTRIES
+  type: CastChainApiType
   payload?: any
 }
 
 type PluginInfo = {
-  plugin_type: 'source' | 'output' | 'filter'
+  plugin_type: PluginType
   plugin_name: string
+}
+
+type CreateSourceMessage = {
+  type: typeof CastChainApiEntries.CREATE_SOURCE
+  payload: {
+    uri: string
+    plugin_name?: string
+    [key: string]: any
+  }
 }
 
 export class PluginContainer {
   private static CHANNEL_NAME = CASTCHAIN_API_CHANNEL_NAME
   private static SOURCE_PLUGINS: ReadonlyArray<SourcePluginInterfaceStatic> = [
+    NichanSourcePlugin,
     MockSourcePlugin,
   ]
   private static OUTPUT_PLUGINS: ReadonlyArray<OutputPluginInterfaceStatic> = [
@@ -75,7 +89,6 @@ export class PluginContainer {
   }
   cleanup() {
     log.debug('PluginContainer.cleanup()')
-    // MainSetting.save(this.setting_)
     this._storePlugins()
     Electron.ipcMain.removeHandler(CASTCHAIN_API_CHANNEL_NAME)
   }
@@ -121,7 +134,7 @@ export class PluginContainer {
     msg: CastchainApiMessageType
   ) {
     log.debug('PluginContainer.handleChannel()', msg)
-    const { ...API } = CASTCHAIN_API_ENTRIES
+    const { ...API } = CastChainApiEntries
     switch (msg.type) {
       case API.INIT_CHECK:
         return { INIT_CHECK: true }
@@ -140,12 +153,14 @@ export class PluginContainer {
       case API.LIST_OUTPUT_PLUGINS:
         return this.listOutputPlugins()
       case API.CREATE_OUTPUT:
-        return this.createSource(msg.payload)
+        return this.createOutput(msg.payload)
       case API.DESTROY_OUTPUT:
-        return this.destroySource(msg.payload)
+        return this.destroyOutput(msg.payload)
       case API.LIST_OUTPUT_INSTANCES:
         throw new Error('Method not implemented.')
 
+      // Filter Plugin Methods
+      // Others Plugin Methods
       //  Others... may be error occuried
       default:
         throw new Error('Method not implemented.')
@@ -158,12 +173,25 @@ export class PluginContainer {
   //--------------------------------------------------------------------------------
   listSourcePlugins(): PluginInfo[] {
     return PluginContainer.SOURCE_PLUGINS.map((p) => ({
-      plugin_type: 'source',
+      plugin_type: p.plugin_type,
       plugin_name: p.plugin_name,
     }))
   }
-  createSource(payload: any): SourcePluginInterface {
-    throw new Error('Method not implemented.')
+  createSource(payload: CreateSourceMessage['payload']): PluginInfo | false {
+    console.log('createSource', payload)
+    // createSourcePlugin相当
+    // if (option?.plugin_name && option.plugin_name) {
+    // }
+    const select_plugin = PluginContainer.SOURCE_PLUGINS.find((p) =>
+      p.isValidURL(payload.uri)
+    )
+    if (select_plugin) {
+      log.info('may be create plugin :', select_plugin.plugin_name)
+      let plugin = new select_plugin(payload)
+      this.sources_.push(plugin)
+      return plugin.getInfo()
+    }
+    return false
   }
   createSourceFromSetting(
     setting: PluginSettingType
@@ -175,7 +203,7 @@ export class PluginContainer {
       log.debug("Can't found correct Plugin", setting)
       return null
     } else {
-      log.info('may be create plugin')
+      log.info('may be create plugin :', Plugin.plugin_name)
       return new Plugin(setting.config)
     }
   }
@@ -189,7 +217,7 @@ export class PluginContainer {
   //--------------------------------------------------------------------------------
   listOutputPlugins(): PluginInfo[] {
     return PluginContainer.OUTPUT_PLUGINS.map((p) => ({
-      plugin_type: 'output',
+      plugin_type: p.plugin_type,
       plugin_name: p.plugin_name,
     }))
   }

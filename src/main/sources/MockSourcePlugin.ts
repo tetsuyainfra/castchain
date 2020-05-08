@@ -15,25 +15,27 @@ import { SourcePluginAbstract } from './SourceInterface'
 import {
   MockSourceMessage,
   StatusNotify,
-  ConfigType,
 } from '../../commons/sources/MockSource'
+import { PluginType, PluginKinds } from '../../commons/castchain'
 
 export class MockSourcePlugin extends SourcePluginAbstract {
+  static plugin_type: PluginType = PluginKinds.SOURCE
   static plugin_name: string = 'MockSourcePlugin'
   static isValidURL(url: string) {
     return true
   }
 
+  plugin_type: PluginType = MockSourcePlugin.plugin_type
   plugin_name_: string = MockSourcePlugin.plugin_name
   name_: string
   url_: string
   publish_status_: 'pending' | 'polling'
   publish_handler_: NodeJS.Timeout | null
 
-  constructor(config: any) {
+  constructor(option: any) {
     super()
-    this.name_ = config.name || ''
-    this.url_ = config.url || ''
+    this.url_ = option.uri || ''
+    this.name_ = option.name || ''
     this.publish_status_ = 'pending'
     this.publish_handler_ = null
     this.handlePublish = this.handlePublish.bind(this)
@@ -77,7 +79,7 @@ export class MockSourcePlugin extends SourcePluginAbstract {
       plugin_uuid: this.ulid,
       config: {
         name: this.name_,
-        url: this.url_,
+        uri: this.url_,
       },
     }
   }

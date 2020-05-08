@@ -1,5 +1,3 @@
-import { SourcePluginStatusType } from '../commons/source'
-
 export enum Actions {
   INIT,
   create_source,
@@ -16,11 +14,21 @@ export enum Actions {
 }
 
 export class SourceAction {
+  static create(source_uri: string) {
+    return {
+      type: Actions.create_source,
+      payload: {
+        source_uri,
+        options: {},
+      },
+    }
+  }
+
   static created(
     plugin_uuid: string,
     plugin_name: string,
     config: any,
-    status: SourcePluginStatusType
+    status: any
   ) {
     return {
       type: Actions.created_source,

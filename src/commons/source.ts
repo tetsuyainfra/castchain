@@ -1,4 +1,7 @@
+import { PluginType } from './castchain'
+
 export type SourcePluginInfo = {
+  plugin_type: PluginType
   plugin_uuid: string
   plugin_name: string
   config: any
